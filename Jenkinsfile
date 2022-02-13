@@ -6,13 +6,13 @@ pipeline {
     }
     tools {
         maven 'Maven'
-        jdk 'JDK 1.8.*'
+        jdk 'JDK 1.11.*'
     }
     stages {
         stage('git checkout') {
             steps {
                 git branch: 'master',
-                url: 'https://github.com/nalajala9/github-action-maven-example-start.git'
+                url: 'https://github.com/nalajala9/mavennexus.git'
                 sh 'ls -al'
             }
         }
@@ -22,15 +22,35 @@ pipeline {
                 sh 'ls -al'
             }
         }
-
-        stage('Sonar Testing') {
+        stage('SonarQube analysis') {
+            environment {
+                scannerHome = tool 'SonarQube Scanner' // the name you have given the Sonar Scanner (Global Tool Configuration
+            }
             steps {
-                sh 'mvn sonar:sonar \
-                -Dsonar.projectKey=test \
-                -Dsonar.host.url=http://3.144.255.88:9000/ \
-                -Dsonar.login=fb5e9f638cede98b9355b07c4ab09a766b59ff03'
+                withSonarQubeEnv(installationName: 'SonarServer') {
+                    sh 'mvn sonar:sonar'
+                }
             }
         }
+         stage('upload jar file to nexus ') {
+            steps {
+                nexusArtifactUploader artifacts: [
+                    [
+                        artifactId: '$(POM_ARTIFACTID)', 
+                        classifier: '', 
+                        file: 'target/${POM_ARTIFACTID}-${POM_VERSION}.${POM_PACKAGING}', 
+                        type: '$(POM_PACKAGING)']
+                ], 
+                    credentialsId: 'nexus', 
+                    groupId: '$(POM_GROUPID)', 
+                    nexusUrl: '13.59.204.213:8081', 
+                    nexusVersion: 'nexus3', 
+                    protocol: 'http', 
+                    repository: 'http://13.59.204.213:8081/repository/javaapp/', 
+                    version: '$(POM_VERSION)'         
+            }
+        }
+        
         stage('Build Docker Image ') {
             steps {
                 sh "docker build  -t ${dockerImage} ."
@@ -39,7 +59,7 @@ pipeline {
 
         stage('Docker Run') {
             steps {
-                sh "docker run -dit --name ${dockerContainerName} ${dockerImage}"
+                sh "docker run -dit --name ${dockerContainerName} -p 8000:80 ${dockerImage}"
             }
         }
         stage('Docker Push') {
