@@ -47,7 +47,7 @@ pipeline {
                     nexusVersion: 'nexus3', 
                     protocol: 'http', 
                     repository: 'javaapp', 
-                    version: '1.0-SNAPSHOT'         
+                    version: '1.0.0'         
             }
         }
         
