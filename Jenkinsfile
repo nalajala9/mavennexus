@@ -59,7 +59,7 @@ pipeline {
 
         stage('Docker Run') {
             steps {
-                sh "docker run -dit --name ${dockerContainerName} -p 8000:80 ${dockerImage}"
+                sh "docker run -dit --name ${dockerContainerName} -p 8001:80 ${dockerImage}"
             }
         }
         stage('Docker Push') {
