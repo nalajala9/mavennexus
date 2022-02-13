@@ -36,18 +36,18 @@ pipeline {
             steps {
                 nexusArtifactUploader artifacts: [
                     [
-                        artifactId: '$(POM_ARTIFACTID)', 
+                        artifactId: 'github-action-maven-tutorial', 
                         classifier: '', 
-                        file: 'target/${POM_ARTIFACTID}-${POM_VERSION}.${POM_PACKAGING}', 
-                        type: '$(POM_PACKAGING)']
+                        file: 'target/github-action-maven-tutorial-1.0-SNAPSHOT.jar', 
+                        type: 'jar']
                 ], 
                     credentialsId: 'nexus', 
-                    groupId: '$(POM_GROUPID)', 
+                    groupId: 'org.kth', 
                     nexusUrl: '13.59.204.213:8081', 
                     nexusVersion: 'nexus3', 
                     protocol: 'http', 
                     repository: 'http://13.59.204.213:8081/repository/javaapp/', 
-                    version: '$(POM_VERSION)'         
+                    version: '1.0-SNAPSHOT'         
             }
         }
         
