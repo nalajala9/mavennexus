@@ -43,7 +43,7 @@ pipeline {
                 ], 
                     credentialsId: 'nexus', 
                     groupId: 'org.kth', 
-                    nexusUrl: '3.138.246.26:8081', 
+                    nexusUrl: '3.145.203.8:8081', 
                     nexusVersion: 'nexus3', 
                     protocol: 'http', 
                     repository: 'javaapp', 
